@@ -5,7 +5,112 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// Schema Client Generator
+
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  email String @unique @db.VarChar(50)
+  password String? @unique
+  refresh_token String?
+  verification_code String?
+  role RoleStatus @default(USER)
+  profile Profile? @relation("Profile")
+  orders Order[] @relation("Order")
+
+  @@index([id])
+}
+
+model Profile {
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(50)
+  phone String? @db.VarChar(20)
+  avatar String? @db.VarChar(100)
+  userId Int @unique
+  user User @relation("Profile", fields: [userId], references: [id])
+  created_at DateTime @default(now())
+  updated_at DateTime? @updatedAt
+
+  @@index([id, userId])
+}
+
+model Order {
+  id Int @id @default(autoincrement())
+  bookingId Int @unique
+  userId Int
+  user User @relation("Order", fields: [userId], references: [id])
+  status PaidStatus @default(UNPAID)
+  passenger Int @default(0)
+  adult Int @default(0)
+  child Int @default(0)
+  price BigInt @default(0)
+  description String?
+  reservationId Int?
+  reservation Ticket? @relation("TicketReservation", fields: [reservationId], references: [id])
+  booking_at DateTime @default(now())
+  flight_at DateTime? @updatedAt
+
+  @@index([id, userId, reservationId])
+}
+
+model Ticket {
+  id Int @id @default(autoincrement())
+  ticketId Int @unique
+  origin String?
+  destination String?
+  departure DateTime?
+  arival DateTime?
+  place_from String?
+  place_to String?
+  country_from String?
+  country_to String?
+  type TypeStatus @default(ECONOMY)
+  trip TripStatus @default(ONEWAY)
+  transit String?
+  price BigInt @default(0)
+  stock BigInt @default(0)
+  airlineId Int
+  airline Airline? @relation("AirlineTicket", fields: [airlineId], references: [id])
+  orders Order[] @relation("TicketReservation")
+  created_at DateTime @default(now())
+  updated_at DateTime? @updatedAt
+
+  @@index([id, airlineId])
+}
+
+model Airline {
+  id Int @id @default(autoincrement())
+  title String @db.VarChar(50)
+  thumbnail String? @db.VarChar(100)
+  tickets Ticket[] @relation("AirlineTicket")
+}
+
+enum PaidStatus {
+  PAID
+  UNPAID
+}
+
+enum TypeStatus {
+  ECONOMY
+  BUSINESS
+  FIRSTCLASS
+}
+
+enum TripStatus {
+  ONEWAY
+  ROUNDTRIP
+}
+
+enum RoleStatus {
+  USER
+  ADMIN
 }
