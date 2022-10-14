@@ -91,6 +91,7 @@ model Airline {
   title String @db.VarChar(50)
   thumbnail String? @db.VarChar(100)
   tickets Ticket[] @relation("AirlineTicket")
+  availability AirlineStatus @default(AVAILABLE)
 }
 
 enum PaidStatus {
@@ -112,4 +113,9 @@ enum TripStatus {
 enum RoleStatus {
   USER
   ADMIN
+}
+
+enum AirlineStatus {
+  AVAILABLE
+  UNAVAILABLE  
 }
