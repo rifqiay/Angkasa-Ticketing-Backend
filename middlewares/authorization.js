@@ -9,7 +9,7 @@ module.exports = {
     const main = async () => {
       try {
         const email = req.userData.email
-        const user = await prisma.user.findUnique({
+        const user = await prisma.user.findFirst({
           where: {
             email
           },
@@ -49,7 +49,7 @@ module.exports = {
     const main = async () => {
       try {
         const email = req.userData.email
-        const checkUser = await prisma.user.findUnique({
+        const checkUser = await prisma.user.findFirst({
           where: {
             email
           },

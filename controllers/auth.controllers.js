@@ -31,7 +31,7 @@ module.exports = {
 
         if (!bodyLength) throw new createErrors.BadRequest('Request body empty')
 
-        const user = await prisma.user.findUnique({
+        const user = await prisma.user.findFirst({
           where: {
             email: data.email
           },
@@ -157,7 +157,7 @@ module.exports = {
 
         if (!bodyLength) throw new createErrors.BadRequest('Request body empty')
 
-        let user = await prisma.user.findUnique({
+        let user = await prisma.user.findFirst({
           where: {
             email: true
           }
@@ -234,7 +234,7 @@ module.exports = {
 
         if (!data) throw new createErrors.NotExtended('Session not found')
 
-        const user = await prisma.user.findUnique({
+        const user = await prisma.user.findFirst({
           where: {
             email: data.email
           },

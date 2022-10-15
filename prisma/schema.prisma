@@ -34,7 +34,10 @@ model Profile {
   id Int @id @default(autoincrement())
   name String @db.VarChar(50)
   phone String? @db.VarChar(20)
-  avatar String? @db.VarChar(100)
+  avatar String? @db.VarChar(200)
+  postcode String? @db.VarChar(10)
+  city String? @db.VarChar(50)
+  address String? @db.VarChar(100)
   userId Int @unique
   user User @relation("Profile", fields: [userId], references: [id])
   created_at DateTime @default(now())
@@ -54,19 +57,18 @@ model Order {
   child Int @default(0)
   price BigInt @default(0)
   description String?
-  reservationId Int?
-  reservation Ticket? @relation("TicketReservation", fields: [reservationId], references: [id])
+  ticketId Int?
+  reservation Ticket? @relation("TicketReservation", fields: [ticketId], references: [id])
   booking_at DateTime @default(now())
   flight_at DateTime?
 
-  @@index([id, userId, reservationId])
+  @@index([id, userId, ticketId])
 }
 
 model Ticket {
   id Int @id @default(autoincrement())
   ticketId Int @unique
   origin String?
-  destination String?
   departure DateTime?
   arival DateTime?
   place_from String?
@@ -81,6 +83,7 @@ model Ticket {
   airlineId Int
   airline Airline? @relation("AirlineTicket", fields: [airlineId], references: [id])
   orders Order[] @relation("TicketReservation")
+  availability AvailabilityStatus @default(AVAILABLE)
   created_at DateTime @default(now())
   updated_at DateTime? @updatedAt
 
@@ -90,9 +93,10 @@ model Ticket {
 model Airline {
   id Int @id @default(autoincrement())
   title String @db.VarChar(50)
-  thumbnail String? @db.VarChar(100)
+  thumbnail String? @db.VarChar(200)
+  airport String? @db.VarChar(100)
   tickets Ticket[] @relation("AirlineTicket")
-  availability AirlineStatus @default(AVAILABLE)
+  availability AvailabilityStatus @default(AVAILABLE)
 }
 
 enum PaidStatus {
@@ -116,7 +120,7 @@ enum RoleStatus {
   ADMIN
 }
 
-enum AirlineStatus {
+enum AvailabilityStatus {
   AVAILABLE
   UNAVAILABLE  
 }

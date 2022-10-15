@@ -103,7 +103,7 @@ module.exports = {
         if (!paramsLength) throw new createErrors.BadRequest('Request parameters empty')
 
         const id = req.params.id
-        const result = await prisma.airline.findUnique({
+        const result = await prisma.airline.findFirst({
           where: { id }
         })
 

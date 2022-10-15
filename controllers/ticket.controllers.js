@@ -97,7 +97,7 @@ module.exports = {
         if (!paramsLength) throw new createErrors.BadRequest('Request parameters empty')
 
         const id = req.params.id
-        const result = await prisma.ticket.findUnique({
+        const result = await prisma.ticket.findFirst({
           where: { id }
         })
 

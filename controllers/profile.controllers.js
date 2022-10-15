@@ -14,7 +14,7 @@ module.exports = {
       try {
         const userData = req.userData
         const id = userData?.id
-        let user = await prisma.profile.findUnique({
+        let user = await prisma.profile.findFirst({
           where: {
             userId: id
           },
@@ -69,7 +69,7 @@ module.exports = {
 
         if (!bodyLength) throw new createErrors.BadRequest('Request body empty')
 
-        const user = await prisma.profile.findUnique({
+        const user = await prisma.profile.findFirst({
           where: {
             userId: id
           },
