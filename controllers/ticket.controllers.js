@@ -5,7 +5,7 @@ require('dotenv').config()
 const { NODE_ENV } = process.env
 
 module.exports = {
-  getAllAirlineControllers: (req, res) => {
+  getAllTicketControllers: (req, res) => {
     const main = async () => {
       try {
         const queryParams = req.query
@@ -14,17 +14,15 @@ module.exports = {
         let rowsWithoutLimit = ''
 
         if (!queryParams) {
-          result = await prisma.airline.findMany()
+          result = await prisma.ticket.findMany()
 
           rowsWithoutLimit = result
         } else {
-          if (queryParams?.search) {
-            result = await prisma.airline.findMany({
-              where: {
-                title: {
-                  search: queryParams?.search
-                }
-              },
+          const searchOption = Object.keys(queryParams?.search).length
+
+          if (searchOption) {
+            result = await prisma.ticket.findMany({
+              where: queryParams?.search,
               orderBy: queryParams?.orderBy || {
                 id: 'desc'
               },
@@ -32,18 +30,14 @@ module.exports = {
               take: parseInt(queryParams?.limit) || 10
             })
 
-            rowsWithoutLimit = await prisma.airline.findMany({
-              where: {
-                title: {
-                  search: queryParams?.search
-                }
-              },
+            rowsWithoutLimit = await prisma.ticket.findMany({
+              where: queryParams?.search,
               orderBy: queryParams?.orderBy || {
                 id: 'desc'
               }
             })
           } else {
-            result = await prisma.airline.findMany({
+            result = await prisma.ticket.findMany({
               orderBy: queryParams?.orderBy || {
                 id: 'desc'
               },
@@ -51,7 +45,7 @@ module.exports = {
               take: parseInt(queryParams?.limit) || 10
             })
 
-            rowsWithoutLimit = await prisma.airline.findMany({
+            rowsWithoutLimit = await prisma.ticket.findMany({
               orderBy: queryParams?.orderBy || {
                 id: 'desc'
               }
@@ -89,12 +83,12 @@ module.exports = {
 
     main()
       .finally(async () => {
-        if (NODE_ENV === 'development') console.log('Airline Controllers: Ends the Query Engine child process and close all connections')
+        if (NODE_ENV === 'development') console.log('Ticket Controllers: Ends the Query Engine child process and close all connections')
 
         await prisma.$disconnect()
       })
   },
-  getAirlineByIdControllers: (req, res) => {
+  getTicketByIdControllers: (req, res) => {
     const main = async () => {
       try {
         const params = req.params
@@ -103,7 +97,7 @@ module.exports = {
         if (!paramsLength) throw new createErrors.BadRequest('Request parameters empty')
 
         const id = req.params.id
-        const result = await prisma.airline.findUnique({
+        const result = await prisma.ticket.findUnique({
           where: { id }
         })
 
@@ -117,7 +111,7 @@ module.exports = {
 
     main()
       .finally(async () => {
-        if (NODE_ENV === 'development') console.log('Airline Controllers: Ends the Query Engine child process and close all connections')
+        if (NODE_ENV === 'development') console.log('Ticket Controllers: Ends the Query Engine child process and close all connections')
 
         await prisma.$disconnect()
       })
