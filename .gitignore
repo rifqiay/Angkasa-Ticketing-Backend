@@ -3,3 +3,5 @@ node_modules
 .env
 prisma/*
 !/prisma/schema.prisma
+yarn.lock
+package-lock.json
