@@ -6,6 +6,255 @@ require('dotenv').config()
 const { NODE_ENV } = process.env
 
 module.exports = {
+  getAllBookingControllers: (req, res) => {
+    const main = async () => {
+      try {
+        const queryParams = req.query
+        let result = ''
+        let totalRows = 0
+        let rowsWithoutLimit = ''
+
+        if (!queryParams) {
+          result = await prisma.order.findMany({
+            include: {
+              user: true,
+              reservation: true
+            }
+          })
+
+          rowsWithoutLimit = result
+        } else {
+          const searchOption = Object.keys(queryParams?.search).length
+
+          if (searchOption) {
+            result = await prisma.order.findMany({
+              where: {
+                OR: [
+                  {
+                    bookingId: {
+                      contains: queryParams?.search
+                    }
+                  },
+                  {
+                    description: {
+                      contains: queryParams?.search
+                    }
+                  },
+                  {
+                    status: {
+                      equals: queryParams?.search
+                    }
+                  },
+                  {
+                    passenger: {
+                      in: [queryParams?.search]
+                    }
+                  },
+                  {
+                    adult: {
+                      in: [queryParams?.search]
+                    }
+                  },
+                  {
+                    child: {
+                      in: [queryParams?.search]
+                    }
+                  },
+                  {
+                    price: {
+                      in: [queryParams?.search]
+                    }
+                  }
+                ]
+              },
+              include: {
+                user: true,
+                reservation: true
+              },
+              orderBy: queryParams?.orderBy || {
+                id: 'desc'
+              },
+              skip: Math.max(((parseInt(queryParams?.limit) || 10) * (parseInt(queryParams?.page) || 0)) - (parseInt(queryParams?.limit) || 10), 0),
+              take: parseInt(queryParams?.limit) || 10
+            })
+
+            rowsWithoutLimit = await prisma.order.findMany({
+              where: {
+                OR: [
+                  {
+                    bookingId: {
+                      contains: queryParams?.search
+                    }
+                  },
+                  {
+                    description: {
+                      contains: queryParams?.search
+                    }
+                  },
+                  {
+                    status: {
+                      equals: queryParams?.search
+                    }
+                  },
+                  {
+                    passenger: {
+                      in: [queryParams?.search]
+                    }
+                  },
+                  {
+                    adult: {
+                      in: [queryParams?.search]
+                    }
+                  },
+                  {
+                    child: {
+                      in: [queryParams?.search]
+                    }
+                  },
+                  {
+                    price: {
+                      in: [queryParams?.search]
+                    }
+                  }
+                ]
+              },
+              include: {
+                user: true,
+                reservation: true
+              },
+              orderBy: queryParams?.orderBy || {
+                id: 'desc'
+              }
+            })
+          } else {
+            result = await prisma.order.findMany({
+              orderBy: queryParams?.orderBy || {
+                id: 'desc'
+              },
+              include: {
+                user: true,
+                reservation: true
+              },
+              skip: Math.max(((parseInt(queryParams?.limit) || 10) * (parseInt(queryParams?.page) || 0)) - (parseInt(queryParams?.limit) || 10), 0),
+              take: parseInt(queryParams?.limit) || 10
+            })
+
+            rowsWithoutLimit = await prisma.order.findMany({
+              orderBy: queryParams?.orderBy || {
+                id: 'desc'
+              },
+              include: {
+                user: true,
+                reservation: true
+              }
+            })
+          }
+        }
+
+        totalRows = rowsWithoutLimit.length
+
+        const totalActiveRows = result.length
+        const sheets = Math.ceil(totalRows / (parseInt(queryParams?.limit) || 0))
+        const nextPage = (page, limit, total) => (total / limit) > page ? (limit <= 0 ? false : page + 1) : false
+        const previousPage = (page) => page <= 1 ? false : page - 1
+        const pagination = {
+          total: {
+            data: totalRows,
+            active: totalActiveRows,
+            sheet: sheets === Infinity ? 0 : sheets
+          },
+          page: {
+            limit: parseInt(queryParams?.limit) || 0,
+            current: parseInt(queryParams?.page) || 1,
+            next: nextPage((parseInt(queryParams?.page) || 1), (parseInt(queryParams?.limit) || 0), totalRows),
+            previous: previousPage((parseInt(queryParams?.page) || 1))
+          }
+        }
+
+        return response(res, 200, result || [], pagination)
+      } catch (error) {
+        return response(res, error.status || 500, {
+          message: error.message || error
+        })
+      }
+    }
+
+    main()
+      .finally(async () => {
+        if (NODE_ENV === 'development') console.log('Booking Controllers: Ends the Query Engine child process and close all connections')
+
+        await prisma.$disconnect()
+      })
+  },
+  getBookingByIdControllers: (req, res) => {
+    const main = async () => {
+      try {
+        const params = req.params
+        const paramsLength = Object.keys(params).length
+
+        if (!paramsLength) throw new createErrors.BadRequest('Request parameters empty')
+
+        const id = req.params.id
+        const result = await prisma.order.findFirst({
+          where: { id },
+          include: {
+            reservation: true,
+            user: true
+          }
+        })
+
+        return response(res, 200, result || {})
+      } catch (error) {
+        return response(res, error.status || 500, {
+          message: error.message || error
+        })
+      }
+    }
+
+    main()
+      .finally(async () => {
+        if (NODE_ENV === 'development') console.log('Booking Controllers: Ends the Query Engine child process and close all connections')
+
+        await prisma.$disconnect()
+      })
+  },
+  getBookingByBookingIdControllers: (req, res) => {
+    const main = async () => {
+      try {
+        const params = req.params
+        const paramsLength = Object.keys(params).length
+        const userData = req.userData
+
+        if (!paramsLength) throw new createErrors.BadRequest('Request parameters empty')
+
+        const bookingId = req.params.bookingId
+        const result = await prisma.order.findFirst({
+          where: { bookingId },
+          include: {
+            reservation: true,
+            user: true
+          }
+        })
+
+        if (!result) throw new createErrors.BadRequest('Booking not found')
+
+        if (result.user.id !== userData.id) throw new createErrors.Conflict('You don\'t have access to this booking')
+
+        return response(res, 200, result)
+      } catch (error) {
+        return response(res, error.status || 500, {
+          message: error.message || error
+        })
+      }
+    }
+
+    main()
+      .finally(async () => {
+        if (NODE_ENV === 'development') console.log('Booking Controllers: Ends the Query Engine child process and close all connections')
+
+        await prisma.$disconnect()
+      })
+  },
   bookingTicketByTicketIdControllers: (req, res) => {
     const main = async () => {
       try {
@@ -13,7 +262,7 @@ module.exports = {
         const paramsLength = Object.keys(params).length
         const data = req.body
         const bodyLength = Object.keys(data).length
-        const id = params?.id
+        const ticketId = params?.ticketId
         const userData = req.userData
 
         if (!paramsLength) throw new createErrors.BadRequest('Request parameters empty')
@@ -21,13 +270,23 @@ module.exports = {
         if (!bodyLength) throw new createErrors.BadRequest('Request body empty')
 
         const ticket = await prisma.ticket.findFirst({
-          where: { id },
+          where: { id: ticketId },
           include: {
-            airline: true
+            airline: true,
+            orders: true
+          }
+        })
+        const booking = await prisma.order.findFirst({
+          where: {
+            reservation: {
+              id: ticketId
+            }
           }
         })
 
         if (!ticket) throw new createErrors.BadRequest('Ticket not found')
+
+        if (booking.status === 'UNPAID') throw new createErrors.Conflict('You already have booking ticket that have no unpaid, please pay your order first or you need to cancel booking later')
 
         if (ticket.availability === 'UNAVAILABLE') throw new createErrors.BadRequest('Ticket unavailable at time, try next day')
 
@@ -40,7 +299,7 @@ module.exports = {
             ...data,
             bookingId: `BOOKING-${randomString(7)}`,
             userId: userData.id,
-            ticketId: ticket.id,
+            reservationId: ticket.id,
             passenger: data.adult + data.child,
             price: (data.adult + data.child) * ticket.price
           }
@@ -74,7 +333,7 @@ module.exports = {
         const paramsLength = Object.keys(params).length
         const data = req.body
         const bodyLength = Object.keys(data).length
-        const id = params?.id
+        const bookingId = params?.bookingId
         const userData = req.userData
 
         if (!paramsLength) throw new createErrors.BadRequest('Request parameters empty')
@@ -82,9 +341,12 @@ module.exports = {
         if (!bodyLength) throw new createErrors.BadRequest('Request body empty')
 
         const booking = await prisma.order.findFirst({
-          where: { id },
+          where: {
+            bookingId
+          },
           include: {
-            reservation: true
+            reservation: true,
+            user: true
           }
         })
 
@@ -92,20 +354,84 @@ module.exports = {
 
         if (booking.status === 'PAID') throw new createErrors.Conflict('Booking already paid')
 
-        if (booking.userId !== userData.id) throw new createErrors.Conflict('You don\'t have access to this ticket')
+        if (booking.user.id !== userData.id) throw new createErrors.Conflict('You don\'t have access to this booking')
 
         const payTicket = await prisma.order.update({
           data: {
             status: 'PAID',
-            bookingId: `TICKET-${randomString(10)}`
+            ticketId: `TICKET-${randomString(10)}`
           },
-          where: { id }
+          where: {
+            bookingId: booking.bookingId
+          }
         })
 
         if (!payTicket) throw new createErrors.Conflict('Failed to pay ticket')
 
         const message = {
           message: 'Success to pay ticket'
+        }
+
+        return response(res, 201, message)
+      } catch (error) {
+        return response(res, error.status || 500, {
+          message: error.message || error
+        })
+      }
+    }
+
+    main()
+      .finally(async () => {
+        if (NODE_ENV === 'development') console.log('Order Controllers: Ends the Query Engine child process and close all connections')
+
+        await prisma.$disconnect()
+      })
+  },
+  cancelTicketByBookingIdControllers: (req, res) => {
+    const main = async () => {
+      try {
+        const params = req.params
+        const paramsLength = Object.keys(params).length
+        const data = req.body
+        const bodyLength = Object.keys(data).length
+        const bookingId = params?.bookingId
+        const userData = req.userData
+
+        if (!paramsLength) throw new createErrors.BadRequest('Request parameters empty')
+
+        if (!bodyLength) throw new createErrors.BadRequest('Request body empty')
+
+        const booking = await prisma.order.findFirst({
+          where: {
+            bookingId
+          },
+          include: {
+            reservation: true,
+            user: true
+          }
+        })
+
+        if (!booking) throw new createErrors.BadRequest('Booking not found')
+
+        if (booking.status === 'PAID') throw new createErrors.Conflict('Booking already paid')
+
+        if (booking.status === 'CANCEL') throw new createErrors.Conflict('Booking already canceled')
+
+        if (booking.user.id !== userData.id) throw new createErrors.Conflict('You don\'t have access to this booking')
+
+        const cancelTicket = await prisma.order.update({
+          data: {
+            status: 'CANCEL'
+          },
+          where: {
+            bookingId: booking.bookingId
+          }
+        })
+
+        if (!cancelTicket) throw new createErrors.Conflict('Failed to cancel ticket')
+
+        const message = {
+          message: 'Success to cancel ticket'
         }
 
         return response(res, 201, message)
