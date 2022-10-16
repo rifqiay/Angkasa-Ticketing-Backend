@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "npx prisma db push --accept-data-loss && cross-env NODE_ENV=production node app.js",
+    "dev": "npx standard --fix && npx prisma migrate dev && cross-env NODE_ENV=development nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -34,6 +36,11 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "eslint": "^8.0.1",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-n": "^15.0.0",
+    "eslint-plugin-promise": "^6.0.0",
     "prisma": "^4.4.0"
   }
 }

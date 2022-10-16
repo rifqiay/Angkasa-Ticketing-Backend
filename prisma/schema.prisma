@@ -3,10 +3,10 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 // Schema Client Generator
-
 
 datasource db {
   provider = "postgresql"
@@ -34,7 +34,10 @@ model Profile {
   id Int @id @default(autoincrement())
   name String @db.VarChar(50)
   phone String? @db.VarChar(20)
-  avatar String? @db.VarChar(100)
+  avatar String? @db.VarChar(200)
+  postcode String? @db.VarChar(10)
+  city String? @db.VarChar(50)
+  address String? @db.VarChar(100)
   userId Int @unique
   user User @relation("Profile", fields: [userId], references: [id])
   created_at DateTime @default(now())
@@ -45,7 +48,8 @@ model Profile {
 
 model Order {
   id Int @id @default(autoincrement())
-  bookingId Int @unique
+  bookingId String? @unique
+  ticketId String? @unique
   userId Int
   user User @relation("Order", fields: [userId], references: [id])
   status PaidStatus @default(UNPAID)
@@ -57,16 +61,14 @@ model Order {
   reservationId Int?
   reservation Ticket? @relation("TicketReservation", fields: [reservationId], references: [id])
   booking_at DateTime @default(now())
-  flight_at DateTime? @updatedAt
+  flight_at DateTime?
 
   @@index([id, userId, reservationId])
 }
 
 model Ticket {
   id Int @id @default(autoincrement())
-  ticketId Int @unique
   origin String?
-  destination String?
   departure DateTime?
   arival DateTime?
   place_from String?
@@ -81,6 +83,7 @@ model Ticket {
   airlineId Int
   airline Airline? @relation("AirlineTicket", fields: [airlineId], references: [id])
   orders Order[] @relation("TicketReservation")
+  availability AvailabilityStatus @default(AVAILABLE)
   created_at DateTime @default(now())
   updated_at DateTime? @updatedAt
 
@@ -90,13 +93,16 @@ model Ticket {
 model Airline {
   id Int @id @default(autoincrement())
   title String @db.VarChar(50)
-  thumbnail String? @db.VarChar(100)
+  thumbnail String? @db.VarChar(200)
+  airport String? @db.VarChar(100)
   tickets Ticket[] @relation("AirlineTicket")
+  availability AvailabilityStatus @default(AVAILABLE)
 }
 
 enum PaidStatus {
   PAID
   UNPAID
+  CANCELED
 }
 
 enum TypeStatus {
@@ -113,4 +119,9 @@ enum TripStatus {
 enum RoleStatus {
   USER
   ADMIN
+}
+
+enum AvailabilityStatus {
+  AVAILABLE
+  UNAVAILABLE  
 }
