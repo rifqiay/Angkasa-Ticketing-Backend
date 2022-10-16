@@ -14,7 +14,11 @@ module.exports = {
         let rowsWithoutLimit = ''
 
         if (!queryParams) {
-          result = await prisma.ticket.findMany()
+          result = await prisma.ticket.findMany({
+            include: {
+              airline: true
+            }
+          })
 
           rowsWithoutLimit = result
         } else {
@@ -23,6 +27,9 @@ module.exports = {
           if (searchOption) {
             result = await prisma.ticket.findMany({
               where: queryParams?.search,
+              include: {
+                airline: true
+              },
               orderBy: queryParams?.orderBy || {
                 id: 'desc'
               },
@@ -32,12 +39,18 @@ module.exports = {
 
             rowsWithoutLimit = await prisma.ticket.findMany({
               where: queryParams?.search,
+              include: {
+                airline: true
+              },
               orderBy: queryParams?.orderBy || {
                 id: 'desc'
               }
             })
           } else {
             result = await prisma.ticket.findMany({
+              include: {
+                airline: true
+              },
               orderBy: queryParams?.orderBy || {
                 id: 'desc'
               },
@@ -46,6 +59,9 @@ module.exports = {
             })
 
             rowsWithoutLimit = await prisma.ticket.findMany({
+              include: {
+                airline: true
+              },
               orderBy: queryParams?.orderBy || {
                 id: 'desc'
               }
@@ -98,10 +114,50 @@ module.exports = {
 
         const id = req.params.id
         const result = await prisma.ticket.findFirst({
-          where: { id }
+          where: { id },
+          include: {
+            airline: true
+          }
         })
 
         return response(res, 200, result || {})
+      } catch (error) {
+        return response(res, error.status || 500, {
+          message: error.message || error
+        })
+      }
+    }
+
+    main()
+      .finally(async () => {
+        if (NODE_ENV === 'development') console.log('Ticket Controllers: Ends the Query Engine child process and close all connections')
+
+        await prisma.$disconnect()
+      })
+  },
+  getTicketByTicketIdControllers: (req, res) => {
+    const main = async () => {
+      try {
+        const params = req.params
+        const paramsLength = Object.keys(params).length
+        const userData = req.userData
+
+        if (!paramsLength) throw new createErrors.BadRequest('Request parameters empty')
+
+        const ticketId = req.params.ticketId
+        const result = await prisma.order.findFirst({
+          where: { ticketId },
+          include: {
+            reservation: true,
+            user: true
+          }
+        })
+
+        if (!result) throw new createErrors.BadRequest('Issued ticket not found')
+
+        if (result.user.id !== userData.id) throw new createErrors.Conflict('You don\'t have access to this issued ticket')
+
+        return response(res, 200, result)
       } catch (error) {
         return response(res, error.status || 500, {
           message: error.message || error
@@ -153,7 +209,7 @@ module.exports = {
 
     main()
       .finally(async () => {
-        if (NODE_ENV === 'development') console.log('Airline Controllers: Ends the Query Engine child process and close all connections')
+        if (NODE_ENV === 'development') console.log('Ticket Controllers: Ends the Query Engine child process and close all connections')
 
         await prisma.$disconnect()
       })
@@ -193,7 +249,7 @@ module.exports = {
 
     main()
       .finally(async () => {
-        if (NODE_ENV === 'development') console.log('Airline Controllers: Ends the Query Engine child process and close all connections')
+        if (NODE_ENV === 'development') console.log('Ticket Controllers: Ends the Query Engine child process and close all connections')
 
         await prisma.$disconnect()
       })
@@ -229,7 +285,7 @@ module.exports = {
 
     main()
       .finally(async () => {
-        if (NODE_ENV === 'development') console.log('Airline Controllers: Ends the Query Engine child process and close all connections')
+        if (NODE_ENV === 'development') console.log('Ticket Controllers: Ends the Query Engine child process and close all connections')
 
         await prisma.$disconnect()
       })

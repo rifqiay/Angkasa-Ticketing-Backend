@@ -48,7 +48,8 @@ model Profile {
 
 model Order {
   id Int @id @default(autoincrement())
-  bookingId Int @unique
+  bookingId String? @unique
+  ticketId String? @unique
   userId Int
   user User @relation("Order", fields: [userId], references: [id])
   status PaidStatus @default(UNPAID)
@@ -57,17 +58,16 @@ model Order {
   child Int @default(0)
   price BigInt @default(0)
   description String?
-  ticketId Int?
-  reservation Ticket? @relation("TicketReservation", fields: [ticketId], references: [id])
+  reservationId Int?
+  reservation Ticket? @relation("TicketReservation", fields: [reservationId], references: [id])
   booking_at DateTime @default(now())
   flight_at DateTime?
 
-  @@index([id, userId, ticketId])
+  @@index([id, userId, reservationId])
 }
 
 model Ticket {
   id Int @id @default(autoincrement())
-  ticketId Int @unique
   origin String?
   departure DateTime?
   arival DateTime?
@@ -102,6 +102,7 @@ model Airline {
 enum PaidStatus {
   PAID
   UNPAID
+  CANCELED
 }
 
 enum TypeStatus {
