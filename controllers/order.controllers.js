@@ -255,14 +255,14 @@ module.exports = {
         await prisma.$disconnect()
       })
   },
-  bookingTicketByTicketIdControllers: (req, res) => {
+  bookingTicketByIdControllers: (req, res) => {
     const main = async () => {
       try {
         const params = req.params
         const paramsLength = Object.keys(params).length
         const data = req.body
         const bodyLength = Object.keys(data).length
-        const ticketId = params?.ticketId
+        const id = params?.id
         const userData = req.userData
 
         if (!paramsLength) throw new createErrors.BadRequest('Request parameters empty')
@@ -270,7 +270,7 @@ module.exports = {
         if (!bodyLength) throw new createErrors.BadRequest('Request body empty')
 
         const ticket = await prisma.ticket.findFirst({
-          where: { id: ticketId },
+          where: { id },
           include: {
             airline: true,
             orders: true
@@ -279,7 +279,7 @@ module.exports = {
         const booking = await prisma.order.findFirst({
           where: {
             reservation: {
-              id: ticketId
+              id
             }
           }
         })
