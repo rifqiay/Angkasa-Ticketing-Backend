@@ -125,7 +125,6 @@ module.exports = {
         const createTicket = await prisma.ticket.create({
           data: {
             ...data,
-            ticketId: data.ticketId,
             origin: data.origin,
             departure: data.departure,
             arival: data.arival,

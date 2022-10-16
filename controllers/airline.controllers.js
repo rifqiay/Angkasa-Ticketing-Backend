@@ -148,7 +148,11 @@ module.exports = {
         }
 
         const createAirline = await prisma.airline.create({
-          data
+          data: {
+            title: data.title,
+            thumbnail: data.thumbnail,
+            airport: data.airport
+          }
         })
 
         if (!createAirline) throw new createErrors.Conflict('Failed to create airline')
