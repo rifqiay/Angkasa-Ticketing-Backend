@@ -2,8 +2,10 @@ const express = require('express')
 const { query, param } = require('express-validator')
 const Route = express.Router()
 
-const { getAllTicketControllers, getTicketByIdControllers } = require('../controllers/ticket.controllers')
+const { getAllTicketControllers, getTicketByIdControllers, postTicketControllers, putTicketControllers, deleteTicketControllers } = require('../controllers/ticket.controllers')
 const validate = require('../middlewares/validation')
+const { grantedAdmin } = require('../middlewares/authorization')
+const { verifyToken } = require('../middlewares/verify')
 
 Route
   .get('/', validate([
@@ -17,5 +19,12 @@ Route
   .get('/:id', validate([
     param('id').escape().trim().notEmpty().withMessage('Ticket ID can\'t be empty').bail().isNumeric().withMessage('Ticket ID must be numeric').bail().toInt()
   ]), getTicketByIdControllers)
+  .post('/', verifyToken, grantedAdmin, postTicketControllers)
+  .put('/:id', validate([
+    param('id').escape().trim().notEmpty().withMessage('Ticket ID can\'t be empty').bail().isNumeric().withMessage('Ticket ID must be numeric').bail().toInt()
+  ]), verifyToken, grantedAdmin, putTicketControllers)
+  .delete('/:id', validate([
+    param('id').escape().trim().notEmpty().withMessage('Ticket ID can\'t be empty').bail().isNumeric().withMessage('Ticket ID must be numeric').bail().toInt()
+  ]), verifyToken, grantedAdmin, deleteTicketControllers)
 
 module.exports = Route

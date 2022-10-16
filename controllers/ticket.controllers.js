@@ -115,5 +115,124 @@ module.exports = {
 
         await prisma.$disconnect()
       })
+  },
+  postTicketControllers: (req, res) => {
+    const main = async () => {
+      try {
+        const data = req.body
+        const isData = Object.keys(data).length
+        if (!isData) throw new createErrors.BadRequest('Request body empty')
+        const createTicket = await prisma.ticket.create({
+          data: {
+            ...data,
+            ticketId: data.ticketId,
+            origin: data.origin,
+            departure: data.departure,
+            arival: data.arival,
+            place_from: data.place_from,
+            place_to: data.place_to,
+            country_from: data.country_from,
+            country_to: data.country_to,
+            transit: data.transit,
+            price: data.price,
+            stock: data.stock
+          }
+        })
+
+        if (!createTicket) throw new createErrors.Conflict('Failed to create ticket')
+
+        const message = {
+          messages: 'Success to create ticket'
+        }
+        return response(res, 201, message)
+      } catch (error) {
+        return response(res, error.status || 500, {
+          message: error.message || error
+        })
+      }
+    }
+
+    main()
+      .finally(async () => {
+        if (NODE_ENV === 'development') console.log('Airline Controllers: Ends the Query Engine child process and close all connections')
+
+        await prisma.$disconnect()
+      })
+  },
+  putTicketControllers: (req, res) => {
+    const main = async () => {
+      try {
+        const params = req.params
+        const isParams = Object.keys(params).length
+        if (!isParams) throw new createErrors.BadRequest('Request parameter empty')
+        const data = req.body
+        const isData = Object.keys(data).length
+        if (!isData) throw new createErrors.BadRequest('Request body empty')
+        const id = params.id
+        const ticket = await prisma.ticket.findFirst({
+          where: { id }
+        })
+        if (!ticket) throw new createErrors.Conflict('Failed to get ticket')
+
+        const updateTicket = await prisma.ticket.update({
+          where: { id },
+          data
+        })
+
+        if (!updateTicket) throw new createErrors.Conflict('Failed to update ticket')
+
+        const message = {
+          messages: 'Success to update ticket'
+        }
+        return response(res, 202, message)
+      } catch (error) {
+        return response(res, error.status || 500, {
+          message: error.message || error
+        })
+      }
+    }
+
+    main()
+      .finally(async () => {
+        if (NODE_ENV === 'development') console.log('Airline Controllers: Ends the Query Engine child process and close all connections')
+
+        await prisma.$disconnect()
+      })
+  },
+  deleteTicketControllers: (req, res) => {
+    const main = async () => {
+      try {
+        const params = req.params
+        const isParams = Object.keys(params).length
+        if (!isParams) throw new createErrors.BadRequest('Request parameter empty')
+
+        const id = params.id
+        const ticket = await prisma.ticket.findFirst({
+          where: { id }
+        })
+        if (!ticket) throw new createErrors.Conflict('Failed to get ticket')
+
+        const deleteTicket = await prisma.ticket.delete({
+          where: { id }
+        })
+        if (!deleteTicket) throw new createErrors.Conflict('Failed to delete ticket')
+
+        const message = {
+          messages: 'Success to delete ticket'
+        }
+        return response(res, 202, message)
+      } catch (error) {
+        return response(res, error.status || 500, {
+          message: error.message || error
+        })
+      }
+    }
+
+    main()
+      .finally(async () => {
+        if (NODE_ENV === 'development') console.log('Airline Controllers: Ends the Query Engine child process and close all connections')
+
+        await prisma.$disconnect()
+      })
   }
 }
