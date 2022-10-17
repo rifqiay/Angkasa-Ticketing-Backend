@@ -286,7 +286,7 @@ module.exports = {
 
         if (!ticket) throw new createErrors.BadRequest('Ticket not found')
 
-        if (booking.status === 'UNPAID') throw new createErrors.Conflict('You already have booking ticket that have no unpaid, please pay your order first or you need to cancel booking later')
+        if (booking?.status === 'UNPAID') throw new createErrors.Conflict('You already have booking ticket that have no unpaid, please pay your order first or you need to cancel booking later')
 
         if (ticket.availability === 'UNAVAILABLE') throw new createErrors.BadRequest('Ticket unavailable at time, try next day')
 
