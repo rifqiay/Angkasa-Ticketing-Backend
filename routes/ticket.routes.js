@@ -25,6 +25,7 @@ Route
     check('airlineId').escape().trim().notEmpty().withMessage('Airline ID Can\'t be empty').bail().toInt()
   ]), verifyToken, grantedAdmin, postTicketControllers)
   .put('/:id', validate([
+    param('id').escape().trim().notEmpty().withMessage('Ticket ID can\'t be empty').bail().isNumeric().withMessage('Ticket ID must be numeric').bail().toInt(),
     check('price').optional({
       nullable: true,
       checkFalsy: true
@@ -37,8 +38,6 @@ Route
       nullable: true,
       checkFalsy: true
     }).escape().trim().notEmpty().withMessage('Airline ID Can\'t be empty').bail().toInt()
-  ]), validate([
-    param('id').escape().trim().notEmpty().withMessage('Ticket ID can\'t be empty').bail().isNumeric().withMessage('Ticket ID must be numeric').bail().toInt()
   ]), verifyToken, grantedAdmin, putTicketControllers)
   .delete('/:id', validate([
     param('id').escape().trim().notEmpty().withMessage('Ticket ID can\'t be empty').bail().isNumeric().withMessage('Ticket ID must be numeric').bail().toInt()

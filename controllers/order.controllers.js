@@ -332,14 +332,10 @@ module.exports = {
       try {
         const params = req.params
         const paramsLength = Object.keys(params).length
-        const data = req.body
-        const bodyLength = Object.keys(data).length
         const bookingId = params?.bookingId
         const userData = req.userData
 
         if (!paramsLength) throw new createErrors.BadRequest('Request parameters empty')
-
-        if (!bodyLength) throw new createErrors.BadRequest('Request body empty')
 
         const booking = await prisma.order.findFirst({
           where: {
@@ -393,14 +389,10 @@ module.exports = {
       try {
         const params = req.params
         const paramsLength = Object.keys(params).length
-        const data = req.body
-        const bodyLength = Object.keys(data).length
         const bookingId = params?.bookingId
         const userData = req.userData
 
         if (!paramsLength) throw new createErrors.BadRequest('Request parameters empty')
-
-        if (!bodyLength) throw new createErrors.BadRequest('Request body empty')
 
         const booking = await prisma.order.findFirst({
           where: {
