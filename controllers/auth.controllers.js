@@ -159,7 +159,7 @@ module.exports = {
 
         let user = await prisma.user.findFirst({
           where: {
-            email: true
+            email: data.email
           }
         })
 
@@ -196,7 +196,7 @@ module.exports = {
 
         const addedRefreshToken = await prisma.user.update({
           where: {
-            email: true
+            email: data.email
           },
           data: {
             refresh_token: refreshToken
