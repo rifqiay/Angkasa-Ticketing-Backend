@@ -34,9 +34,6 @@ module.exports = {
         const user = await prisma.user.findFirst({
           where: {
             email: data.email
-          },
-          include: {
-            profile: true
           }
         })
 
@@ -54,6 +51,13 @@ module.exports = {
             profile: {
               create: {
                 name: data.name
+              }
+            }
+          },
+          select: {
+            profile: {
+              select: {
+                name: true
               }
             }
           }
