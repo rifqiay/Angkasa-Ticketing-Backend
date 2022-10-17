@@ -35,12 +35,8 @@ module.exports = {
           where: {
             email: data.email
           },
-          select: {
-            profile: {
-              select: {
-                name: true
-              }
-            }
+          include: {
+            profile: true
           }
         })
 
