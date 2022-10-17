@@ -2,6 +2,7 @@ const response = require('../helpers/response')
 const createErrors = require('http-errors')
 const prisma = require('../config/prisma')
 const { randomString } = require('../helpers/common')
+const exclude = require('../helpers/excluder')
 require('dotenv').config()
 const { NODE_ENV } = process.env
 
@@ -17,8 +18,16 @@ module.exports = {
         if (!queryParams) {
           result = await prisma.order.findMany({
             include: {
-              user: true,
-              reservation: true
+              user: {
+                include: {
+                  profile: true
+                }
+              },
+              reservation: {
+                include: {
+                  airline: true
+                }
+              }
             }
           })
 
@@ -68,8 +77,16 @@ module.exports = {
                 ]
               },
               include: {
-                user: true,
-                reservation: true
+                user: {
+                  include: {
+                    profile: true
+                  }
+                },
+                reservation: {
+                  include: {
+                    airline: true
+                  }
+                }
               },
               orderBy: queryParams?.orderBy || {
                 id: 'desc'
@@ -119,8 +136,16 @@ module.exports = {
                 ]
               },
               include: {
-                user: true,
-                reservation: true
+                user: {
+                  include: {
+                    profile: true
+                  }
+                },
+                reservation: {
+                  include: {
+                    airline: true
+                  }
+                }
               },
               orderBy: queryParams?.orderBy || {
                 id: 'desc'
@@ -132,8 +157,16 @@ module.exports = {
                 id: 'desc'
               },
               include: {
-                user: true,
-                reservation: true
+                user: {
+                  include: {
+                    profile: true
+                  }
+                },
+                reservation: {
+                  include: {
+                    airline: true
+                  }
+                }
               },
               skip: Math.max(((parseInt(queryParams?.limit) || 10) * (parseInt(queryParams?.page) || 0)) - (parseInt(queryParams?.limit) || 10), 0),
               take: parseInt(queryParams?.limit) || 10
@@ -144,13 +177,33 @@ module.exports = {
                 id: 'desc'
               },
               include: {
-                user: true,
-                reservation: true
+                user: {
+                  include: {
+                    profile: true
+                  }
+                },
+                reservation: {
+                  include: {
+                    airline: true
+                  }
+                }
               }
             })
           }
         }
 
+        result = exclude(result, [
+          'password',
+          'refresh_token',
+          'verification_code'
+        ]
+        )
+        rowsWithoutLimit = exclude(rowsWithoutLimit, [
+          'password',
+          'refresh_token',
+          'verification_code'
+        ]
+        )
         totalRows = rowsWithoutLimit.length
 
         const totalActiveRows = result.length
@@ -195,13 +248,28 @@ module.exports = {
         if (!paramsLength) throw new createErrors.BadRequest('Request parameters empty')
 
         const id = req.params.id
-        const result = await prisma.order.findFirst({
+        let result = await prisma.order.findFirst({
           where: { id },
           include: {
-            reservation: true,
-            user: true
+            user: {
+              include: {
+                profile: true
+              }
+            },
+            reservation: {
+              include: {
+                airline: true
+              }
+            }
           }
         })
+
+        result = exclude(result, [
+          'password',
+          'refresh_token',
+          'verification_code'
+        ]
+        )
 
         return response(res, 200, result || {})
       } catch (error) {
@@ -228,17 +296,32 @@ module.exports = {
         if (!paramsLength) throw new createErrors.BadRequest('Request parameters empty')
 
         const bookingId = req.params.bookingId
-        const result = await prisma.order.findFirst({
+        let result = await prisma.order.findFirst({
           where: { bookingId },
           include: {
-            reservation: true,
-            user: true
+            user: {
+              include: {
+                profile: true
+              }
+            },
+            reservation: {
+              include: {
+                airline: true
+              }
+            }
           }
         })
 
         if (!result) throw new createErrors.BadRequest('Booking not found')
 
         if (result.user.id !== userData.id) throw new createErrors.Conflict('You don\'t have access to this booking')
+
+        result = exclude(result, [
+          'password',
+          'refresh_token',
+          'verification_code'
+        ]
+        )
 
         return response(res, 200, result)
       } catch (error) {
@@ -272,8 +355,16 @@ module.exports = {
         const ticket = await prisma.ticket.findFirst({
           where: { id },
           include: {
-            airline: true,
-            orders: true
+            user: {
+              include: {
+                profile: true
+              }
+            },
+            reservation: {
+              include: {
+                airline: true
+              }
+            }
           }
         })
         const booking = await prisma.order.findFirst({
@@ -342,8 +433,16 @@ module.exports = {
             bookingId
           },
           include: {
-            reservation: true,
-            user: true
+            user: {
+              include: {
+                profile: true
+              }
+            },
+            reservation: {
+              include: {
+                airline: true
+              }
+            }
           }
         })
 
@@ -399,8 +498,16 @@ module.exports = {
             bookingId
           },
           include: {
-            reservation: true,
-            user: true
+            user: {
+              include: {
+                profile: true
+              }
+            },
+            reservation: {
+              include: {
+                airline: true
+              }
+            }
           }
         })
 

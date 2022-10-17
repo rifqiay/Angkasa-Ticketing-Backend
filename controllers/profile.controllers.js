@@ -35,7 +35,12 @@ module.exports = {
           }
         })
 
-        user = exclude(user, ['password', 'refresh_token', 'verification_code'])
+        user = exclude(user, [
+          'password',
+          'refresh_token',
+          'verification_code'
+        ]
+        )
 
         if (!user) throw new createErrors.ExpectationFailed('Unregistered account')
 

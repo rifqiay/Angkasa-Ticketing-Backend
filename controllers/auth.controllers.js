@@ -72,7 +72,7 @@ module.exports = {
         )
 
         result = {
-          message: `Register new account: ${result[0].name}, to continue please verify you're email address first`
+          message: `Register new account: ${result.profile.name}, to continue please verify you're email address first`
         }
 
         return response(res, 201, result)
