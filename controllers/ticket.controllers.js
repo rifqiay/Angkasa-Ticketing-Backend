@@ -3,6 +3,7 @@ const createErrors = require('http-errors')
 const prisma = require('../config/prisma')
 require('dotenv').config()
 const { NODE_ENV } = process.env
+const qs = require('qs')
 
 module.exports = {
   getAllTicketControllers: (req, res) => {
@@ -23,10 +24,11 @@ module.exports = {
           rowsWithoutLimit = result
         } else {
           const searchOption = Object.keys(queryParams?.search).length
+          const parseSearchString = qs.parse(queryParams?.search)
 
           if (searchOption) {
             result = await prisma.ticket.findMany({
-              where: queryParams?.search,
+              where: parseSearchString,
               include: {
                 airline: true
               },
@@ -38,7 +40,7 @@ module.exports = {
             })
 
             rowsWithoutLimit = await prisma.ticket.findMany({
-              where: queryParams?.search,
+              where: parseSearchString,
               include: {
                 airline: true
               },
