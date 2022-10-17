@@ -15,14 +15,14 @@ Route
     query('page').escape().trim().toInt()
   ]), verifyToken, grantedAdmin, getAllAirlineControllers)
   .get('/:id', validate([
-    param('id').escape().trim().notEmpty().withMessage('Airline ID can\'t be empty').bail().isNumeric().withMessage('Airline ID must be numeric').bail().toInt()
+    param('id').escape().trim().notEmpty().withMessage('ID can\'t be empty').bail().isNumeric().withMessage('ID must be numeric').bail().toInt()
   ]), getAirlineByIdControllers)
   .post('/', multerHandler, verifyToken, grantedAdmin, postAirlineController)
   .put('/:id', multerHandler, validate([
-    param('id').escape().trim().notEmpty().withMessage('Airline ID can\'t be empty').bail().isNumeric().withMessage('Airline ID must be numeric').bail().toInt()
+    param('id').escape().trim().notEmpty().withMessage('ID can\'t be empty').bail().isNumeric().withMessage('ID must be numeric').bail().toInt()
   ]), verifyToken, grantedAdmin, putAirlineController)
   .delete('/:id', validate([
-    param('id').escape().trim().notEmpty().withMessage('Airline ID can\'t be empty').bail().isNumeric().withMessage('Airline ID must be numeric').bail().toInt()
+    param('id').escape().trim().notEmpty().withMessage('ID can\'t be empty').bail().isNumeric().withMessage('ID must be numeric').bail().toInt()
   ]), verifyToken, grantedAdmin, deleteAirlineController)
 
 module.exports = Route
