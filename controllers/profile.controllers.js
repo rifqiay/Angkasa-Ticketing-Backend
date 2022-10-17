@@ -128,7 +128,9 @@ module.exports = {
           }
         })
 
-        const message = `Profile: ${result.name}, successfully updated`
+        const message = {
+          message: `Profile: ${result.name}, successfully updated`
+        }
 
         return response(res, 200, message)
       } catch (error) {

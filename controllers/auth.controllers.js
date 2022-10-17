@@ -71,11 +71,11 @@ module.exports = {
           registrationEmailTemplate(req, encryptRandomCode)
         )
 
-        result = {
+        const message = {
           message: `Register new account: ${result.profile.name}, to continue please verify you're email address first`
         }
 
-        return response(res, 201, result)
+        return response(res, 201, message)
       } catch (error) {
         return response(res, error.status || 500, {
           message: error.message || error
@@ -294,7 +294,9 @@ module.exports = {
 
         res.clearCookie('token')
 
-        const message = { message: 'Successfully log out' }
+        const message = {
+          message: 'Successfully log out'
+        }
 
         return response(res, 200, message)
       } catch (error) {
