@@ -9,10 +9,7 @@ const { verifyToken } = require('../middlewares/verify')
 
 Route
   .get('/', validate([
-    query('search').optional({
-      nullable: true,
-      checkFalsy: true
-    }).escape().trim().isObject().withMessage('Search query, required object'),
+    query('search').escape().trim(),
     query('limit').escape().trim().toInt(),
     query('page').escape().trim().toInt()
   ]), getAllTicketControllers)
