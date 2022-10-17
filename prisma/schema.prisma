@@ -56,7 +56,7 @@ model Order {
   passenger Int @default(0)
   adult Int @default(0)
   child Int @default(0)
-  price BigInt @default(0)
+  price Int @default(0)
   description String?
   reservationId Int?
   reservation Ticket? @relation("TicketReservation", fields: [reservationId], references: [id])
@@ -78,8 +78,8 @@ model Ticket {
   type TypeStatus @default(ECONOMY)
   trip TripStatus @default(ONEWAY)
   transit String?
-  price BigInt @default(0)
-  stock BigInt @default(0)
+  price Int @default(0)
+  stock Int @default(0)
   airlineId Int
   airline Airline? @relation("AirlineTicket", fields: [airlineId], references: [id])
   orders Order[] @relation("TicketReservation")
