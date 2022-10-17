@@ -183,7 +183,6 @@ module.exports = {
         const createTicket = await prisma.ticket.create({
           data: {
             ...data,
-            origin: data.origin,
             departure: data.departure,
             arival: data.arival,
             place_from: data.place_from,
