@@ -15,6 +15,10 @@ datasource db {
 
 generator dbml {
   provider = "prisma-dbml-generator"
+  outputName = "angkasa-ticketing.dbml"
+  projectName = "Angkasa Ticketing Backend"
+  projectDatabaseType = "PostgreSQL"
+  projectNote = "Documentation for database scheme Angkasa Ticketing Backend"
 }
 
 model User {
