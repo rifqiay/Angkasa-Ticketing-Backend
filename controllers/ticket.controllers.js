@@ -184,8 +184,8 @@ module.exports = {
           data: {
             ...data,
             origin: data.origin,
-            departure: data.departure,
-            arival: data.arival,
+            departure: new Date(data.departure),
+            arival: new Date(data.arival),
             place_from: data.place_from,
             place_to: data.place_to,
             country_from: data.country_from,
@@ -233,7 +233,11 @@ module.exports = {
 
         const updateTicket = await prisma.ticket.update({
           where: { id },
-          data
+          data: {
+            ...data,
+            departure: new Date(data.departure),
+            arival: new Date(data.arival)
+          }
         })
 
         if (!updateTicket) throw new createErrors.Conflict('Failed to update ticket')
