@@ -65,7 +65,6 @@ model Order {
   reservationId Int?
   reservation Ticket? @relation("TicketReservation", fields: [reservationId], references: [id])
   booking_at DateTime @default(now())
-  flight_at DateTime?
 
   @@index([id, userId, reservationId])
 }
