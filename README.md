@@ -2,8 +2,8 @@
 
 <!-- HEADER -->
 <div align="center">
-  <a href="https://github.com/zeronerocode/ankasa-ticketing-server">
-    <img src="https://camo.githubusercontent.com/6a3531baa42980849735e81a94023be676b1a62b5371fd1e3a4561bf9df13d19/68747470733a2f2f692e6962622e636f2f436e59535179382f696c6c757374726174696f6e2e706e67" alt="Logo" width="150px">
+  <a href="https://github.com/rifqiay/Angkasa-Ticketing-Backend.git">
+    <img src="https://camo.githubusercontent.com/6a3531baa42980849735e81a94023be676b1a62b5371fd1e3a4561bf9df13d19/68747470733a2f2f692e6962622e636f2f436e59535179382f696c6c757374726174696f6e2e706e67" alt="Logo" width="200px">
   </a>
   
   <h3 align="center">Angkasa Ticketing Backend</h3>
@@ -33,8 +33,7 @@
     </li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#related-project">Related Project</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#our-team">Contact</a></li>
+    <li><a href="#our-team">Our Team</a></li>
     <li><a href="#license">License</a></li>
   </ol>
 </details>
@@ -46,7 +45,7 @@ This app was built with some technologies below:
 - [Express.js](https://expressjs.com/)
 - [JSON Web Token](https://jwt.io/)
 - [PostgreSQL](https://www.postgresql.org/)
-- and other
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- GETTING STARTED -->
@@ -143,7 +142,7 @@ Contributions are what make the open source community such an amazing place to b
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Related Project
-:rocket: [`Frontend Angkasa Ticketing`](https://github.com/rifqiay/Angkasa-Ticketing-Frontend)
+:rocket: [`Angkasa Ticketing Frontend`](https://github.com/rifqiay/Angkasa-Ticketing-Frontend)
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Our Team
