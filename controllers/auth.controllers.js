@@ -292,7 +292,7 @@ module.exports = {
 
         if (!removeRefreshToken) throw new createErrors.NotAcceptable('Failed to remove refresh token')
 
-        res.clearCookie('token')
+        res.clearCookie('token', { httpOnly: true })
 
         const message = {
           message: 'Successfully log out'
