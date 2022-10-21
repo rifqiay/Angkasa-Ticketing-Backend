@@ -294,9 +294,7 @@ module.exports = {
 
         res.clearCookie('token', {
           httpOnly: true,
-          sameSite: 'strict',
-          secure: NODE_ENV === 'production',
-          signed: true
+          domain: NODE_ENV === 'production' ? req.get('host') : 'localhost'
         })
 
         const message = {
