@@ -292,9 +292,12 @@ module.exports = {
 
         if (!removeRefreshToken) throw new createErrors.NotAcceptable('Failed to remove refresh token')
 
-        if (NODE_ENV === 'production') res.clearCookie('token', { httpOnly: true, domain: '.railway.app' })
-
-        res.clearCookie('token', { httpOnly: true })
+        res.clearCookie('token', {
+          httpOnly: true,
+          sameSite: 'strict',
+          secure: NODE_ENV === 'production',
+          signed: true
+        })
 
         const message = {
           message: 'Successfully log out'
