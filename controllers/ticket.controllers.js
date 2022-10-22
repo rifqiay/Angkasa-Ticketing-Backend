@@ -24,9 +24,37 @@ module.exports = {
           rowsWithoutLimit = result
         } else {
           const searchOption = Object.keys(queryParams?.search).length
-          const parseSearchString = qs.parse(queryParams?.search)
 
           if (searchOption) {
+            let parseSearchString = qs.parse(qs.parse(req._parsedUrl.search.substring(1)).search)
+
+            if (parseSearchString?.departure) {
+              parseSearchString = {
+                ...parseSearchString,
+                departure: {
+                  gte: new Date(parseSearchString?.departure?.gte)
+                }
+              }
+            }
+
+            if (parseSearchString?.arival) {
+              parseSearchString = {
+                ...parseSearchString,
+                arival: {
+                  gte: new Date(parseSearchString?.arival?.gte)
+                }
+              }
+            }
+
+            if (parseSearchString?.stock) {
+              parseSearchString = {
+                ...parseSearchString,
+                stock: {
+                  gte: parseInt(parseSearchString?.stock?.gte)
+                }
+              }
+            }
+
             result = await prisma.ticket.findMany({
               where: parseSearchString,
               include: {
