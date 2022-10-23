@@ -115,22 +115,22 @@ module.exports = {
                   },
                   {
                     passenger: {
-                      in: [queryParams?.search]
+                      gte: parseInt(queryParams?.search)
                     }
                   },
                   {
                     adult: {
-                      in: [queryParams?.search]
+                      gte: parseInt(queryParams?.search)
                     }
                   },
                   {
                     child: {
-                      in: [queryParams?.search]
+                      gte: parseInt(queryParams?.search)
                     }
                   },
                   {
                     price: {
-                      in: [queryParams?.search]
+                      gte: parseInt(queryParams?.search)
                     }
                   }
                 ]
