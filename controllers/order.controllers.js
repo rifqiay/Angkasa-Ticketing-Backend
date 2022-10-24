@@ -355,16 +355,7 @@ module.exports = {
         const ticket = await prisma.ticket.findFirst({
           where: { id },
           include: {
-            user: {
-              include: {
-                profile: true
-              }
-            },
-            reservation: {
-              include: {
-                airline: true
-              }
-            }
+            airline: true
           }
         })
         const booking = await prisma.order.findFirst({
