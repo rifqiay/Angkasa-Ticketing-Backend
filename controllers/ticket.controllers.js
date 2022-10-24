@@ -29,21 +29,55 @@ module.exports = {
             let parseSearchString = qs.parse(qs.parse(req._parsedUrl.search.substring(1)).search)
 
             if (parseSearchString?.departure) {
-              parseSearchString = {
-                ...parseSearchString,
-                departure: {
-                  gte: new Date(parseSearchString?.departure?.gte)
-                }
-              }
+              parseSearchString = (parseSearchString?.departure?.gte && parseSearchString?.departure?.lte)
+                ? {
+                    ...parseSearchString,
+                    departure: {
+                      gte: new Date(parseSearchString?.departure?.gte),
+                      lte: new Date(parseSearchString?.departure?.lte)
+                    }
+                  }
+                : (
+                    parseSearchString?.departure?.gte
+                      ? {
+                          ...parseSearchString,
+                          departure: {
+                            gte: new Date(parseSearchString?.departure?.gte)
+                          }
+                        }
+                      : {
+                          ...parseSearchString,
+                          departure: {
+                            lte: new Date(parseSearchString?.departure?.lte)
+                          }
+                        }
+                  )
             }
 
             if (parseSearchString?.arival) {
-              parseSearchString = {
-                ...parseSearchString,
-                arival: {
-                  gte: new Date(parseSearchString?.arival?.gte)
-                }
-              }
+              parseSearchString = (parseSearchString?.arival?.gte && parseSearchString?.arival?.lte)
+                ? {
+                    ...parseSearchString,
+                    arival: {
+                      gte: new Date(parseSearchString?.arival?.gte),
+                      lte: new Date(parseSearchString?.arival?.lte)
+                    }
+                  }
+                : (
+                    parseSearchString?.arival?.gte
+                      ? {
+                          ...parseSearchString,
+                          arival: {
+                            gte: new Date(parseSearchString?.arival?.gte)
+                          }
+                        }
+                      : {
+                          ...parseSearchString,
+                          arival: {
+                            lte: new Date(parseSearchString?.arival?.lte)
+                          }
+                        }
+                  )
             }
 
             if (parseSearchString?.stock) {

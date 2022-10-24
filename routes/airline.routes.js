@@ -3,7 +3,7 @@ const { query, param } = require('express-validator')
 const Route = express.Router()
 
 const { getAllAirlineControllers, getAirlineByIdControllers, postAirlineController, putAirlineController, deleteAirlineController } = require('../controllers/airline.controllers')
-const { grantedAdmin } = require('../middlewares/authorization')
+const { grantedAdmin, grantedAll } = require('../middlewares/authorization')
 const validate = require('../middlewares/validation')
 const { verifyToken } = require('../middlewares/verify')
 const { multerHandler } = require('../middlewares/upload')
@@ -13,7 +13,7 @@ Route
     query('search').escape().trim(),
     query('limit').escape().trim().toInt(),
     query('page').escape().trim().toInt()
-  ]), verifyToken, grantedAdmin, getAllAirlineControllers)
+  ]), verifyToken, grantedAll, getAllAirlineControllers)
   .get('/:id', validate([
     param('id').escape().trim().notEmpty().withMessage('ID can\'t be empty').bail().isNumeric().withMessage('ID must be numeric').bail().toInt()
   ]), getAirlineByIdControllers)
