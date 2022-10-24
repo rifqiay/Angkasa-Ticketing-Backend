@@ -28,8 +28,14 @@ Route
   ]), verifyToken, grantedAll, getBookingByBookingIdControllers)
   .post('/booking/ticket/:id', validate([
     param('id').escape().trim().notEmpty().withMessage('ID can\'t be empty').bail().isNumeric().withMessage('ID must be numeric').bail().toInt(),
-    check('adult').escape().trim().notEmpty().withMessage('Adult count Can\'t be empty').bail().toInt(),
-    check('child').escape().trim().notEmpty().withMessage('Child count Can\'t be empty').bail().toInt(),
+    check('adult').optional({
+      nullable: true,
+      checkFalsy: true
+    }).escape().trim().notEmpty().withMessage('Adult count Can\'t be empty').bail().toInt(),
+    check('child').optional({
+      nullable: true,
+      checkFalsy: true
+    }).escape().trim().notEmpty().withMessage('Child count Can\'t be empty').bail().toInt(),
     check('description').optional({
       nullable: true,
       checkFalsy: true

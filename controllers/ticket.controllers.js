@@ -89,6 +89,15 @@ module.exports = {
               }
             }
 
+            if (parseSearchString?.airlineId?.equals) {
+              parseSearchString = {
+                ...parseSearchString,
+                airlineId: {
+                  equals: parseInt(parseSearchString?.airlineId?.equals)
+                }
+              }
+            }
+
             result = await prisma.ticket.findMany({
               where: parseSearchString,
               include: {
