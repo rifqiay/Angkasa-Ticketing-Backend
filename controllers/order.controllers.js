@@ -381,10 +381,10 @@ module.exports = {
           data: {
             ...data,
             bookingId: `BOOKING-${randomString(7)}`,
-            userId: userData.id,
+            userId: parseInt(userData.id),
             reservationId: ticket.id,
-            passenger: data.adult + data.child,
-            price: (data.adult + data.child) * ticket.price
+            passenger: parseInt(data.adult + data.child) ?? 0,
+            price: parseInt((data.adult + data.child) * ticket.price) ?? 0
           }
         })
 
